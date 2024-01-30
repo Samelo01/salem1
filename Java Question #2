@@ -1,0 +1,89 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+class Student {
+    private String name;
+    private double quizzes;
+    private double test1;
+    private double test2;
+    private double finalTest;
+
+    public Student(String name, double quizzes, double test1, double test2, double finalTest) {
+        this.name = name;
+        this.quizzes = quizzes;
+        this.test1 = test1;
+        this.test2 = test2;
+        this.finalTest = finalTest;
+    }
+
+    public double getFinalGrade() {
+        return (quizzes + test1 + test2 + finalTest) / 4.0;
+    }
+}
+
+class Section {
+    private List<Student> roster;
+
+    public Section() {
+        roster = new ArrayList<>();
+    }
+
+    public void addStudent(Student student) {
+        roster.add(student);
+    }
+
+    public double getSectionAverage() {
+        double totalFinalGrade = 0.0;
+
+        for (Student student : roster) {
+            totalFinalGrade += student.getFinalGrade();
+        }
+
+        return totalFinalGrade / roster.size();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Section section = new Section();
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter file name: ");
+            String fileName = reader.readLine();
+            reader.close();
+
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 8) {
+                    String name = data[0];
+                    double quiz1 = Double.parseDouble(data[1]);
+                    double quiz2 = Double.parseDouble(data[2]);
+                    double quiz3 = Double.parseDouble(data[3]);
+                    double quiz4 = Double.parseDouble(data[4]);
+                    double test1 = Double.parseDouble(data[5]);
+                    double test2 = Double.parseDouble(data[6]);
+                    double finalTest = Double.parseDouble(data[7]);
+
+                    double quizzes = (quiz1 + quiz2 + quiz3 + quiz4) / 4.0;
+
+                    Student student = new Student(name, quizzes, test1, test2, finalTest);
+                    section.addStudent(student);
+                }
+            }
+
+            bufferedReader.close();
+            fileReader.close();
+
+            double classAverage = section.getSectionAverage();
+            System.out.println("The class average is: " + classAverage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
